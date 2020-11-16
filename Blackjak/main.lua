@@ -1,8 +1,18 @@
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
-VIRTUAL_WIDTH = 432
-VIRTUAL_HEIGHT = 243
+VIRTUAL_WIDTH = 1280
+VIRTUAL_HEIGHT = 720
+
+--Calls from the push library.
+push = require 'push'
+
+--Sets up the window for the game and centers everything according.
+push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, {
+    fullscreen = false,
+    vsync = true,
+    resizeable = true
+})
 
 gameState = 'start'
 --RULES:
@@ -40,21 +50,47 @@ function love.load()
     love.window.setTitle('Blackjak')
 
     --Creates the fonts that will be used throughout the game.
-    smallFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 10)
-    largeFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 30)
+    smallFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 25)
+    largeFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 100)
 
 end
 
 function love.draw()
+    --Applies the push attributes.
+    push:start()
+
     --This will create the temporary background of a green table. It will be changed depending on the gameState later on.
     love.graphics.clear(1 / 255, 140 / 255, 1 / 255, 255 / 255)
+
 
     --This if statement will display the welcome message to the user.
     if gameState == 'start' then
         love.graphics.setFont(largeFont)
         love.graphics.printf('Welcome to Blackjak', 0, 40, VIRTUAL_WIDTH, 'center')
+        love.graphics.setFont(smallFont)
+        love.graphics.printf('Press and hold "R" to learn the instructions of Blackjak.', 0, 200, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('Press "Enter" to join a table and begin the game!', 0, 225, VIRTUAL_WIDTH, 'center')
 
     end
+
+    if gameState == 'rules' then
+        love.graphics.setFont(largeFont)
+        love.graphics.printf('Test', 0, 40, VIRTUAL_WIDTH, 'center')
+    
+    end
+
+    push:finish()
+end
+
+function love.update(dt)
+
+    --If the player presses and holds 'r' they can go to the rules page and read how to play.
+    if love.keyboard.isDown('r') then
+        gameState = 'rules'
+    else
+        gameState = 'start'
+    end
+
 end
 
 
