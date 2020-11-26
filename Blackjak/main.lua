@@ -6,6 +6,8 @@ VIRTUAL_HEIGHT = 720
 
 --Calls from the push library.
 push = require 'push'
+Class = require 'class'
+
 
 --Sets up the window for the game and centers everything according.
 push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, {
@@ -15,6 +17,12 @@ push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, {
 })
 
 gameState = 'start'
+
+playerMoney = 500
+currentBet = 0
+pointTotal = 0
+
+
 --RULES:
 --The goal of blackjack is to beat the dealer's hand without going over 21.
 
@@ -46,14 +54,9 @@ gameState = 'start'
 
 
 function love.load()
-    -- Sets the Window Title to say "Blackjak" because it's the title of the game.
-    love.window.setTitle('Blackjak')
 
-    --Creates the fonts that will be used throughout the game.
-    smallFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 25)
-    largeFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 100)
+    love.graphics.setDefaultFilter('nearest', 'nearest')
 
-    --Loads all the card images, in the future, I will see if I can load this in a seperate file so this code doesn't take up many lines in main.
     twoClubs = love.graphics.newImage('cards/2C.png')
     twoDiamonds = love.graphics.newImage('cards/2D.png')
     twoHearts = love.graphics.newImage('cards/2H.png')
@@ -109,7 +112,73 @@ function love.load()
 
     cardBack = love.graphics.newImage('cards/red_back.png')
 
+    -- Sets the Window Title to say "Blackjak" because it's the title of the game.
+    love.window.setTitle('Blackjak')
 
+    --Creates the fonts that will be used throughout the game.
+    smallFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 25)
+    largeFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 100)
+    gameFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 50)
+
+    --Loads all the card images, in the future, I will see if I can load this in a seperate file so this code doesn't take up many lines in main.
+
+    love.keyboard.keysPressed = {}
+
+
+end
+
+function love.keypressed(key)
+
+    if key == 'escape' then
+        love.event.quit()
+    end
+
+    if key == 'r' then
+        gameState = 'rules'
+    end
+
+    if key == 's' then
+        gameState = 'start'
+    end
+
+    if key == 'p' then
+        gameState = 'play'
+    end
+
+    if key == '5' then
+        love.event.bet(50)
+    end
+
+    if key == '4' then
+        love.event.bet(40)
+    end
+
+    if key == '3' then
+        love.event.bet(30)
+    end
+    
+    if key == '2' then
+        love.event.bet(20)
+    end
+
+    if key == '1' then
+        love.event.bet(10)
+    end
+
+
+
+    love.keyboard.keysPressed[key] = true
+
+end
+
+--This is most likely not needed
+function love.keyreleased(key)
+
+end
+
+--This is most likely not needed. I need to rewatch the mario workshop to see what they did with this function.
+function love.keyboard.wasPressed(key)
+    return love.keyboard.keysPressed[key]
 end
 
 function love.draw()
@@ -125,7 +194,7 @@ function love.draw()
         love.graphics.setFont(largeFont)
         love.graphics.printf('Welcome to Blackjak', 0, 40, VIRTUAL_WIDTH, 'center')
         love.graphics.setFont(smallFont)
-        love.graphics.printf('Press and hold "R" to learn the instructions of Blackjak.', 0, 200, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('Press "R" to learn the instructions of Blackjak.', 0, 200, VIRTUAL_WIDTH, 'center')
         love.graphics.printf('Press "Enter" to join a table and begin the game!', 0, 225, VIRTUAL_WIDTH, 'center')
         
         --This will scale the card images because they currently too big.
@@ -135,10 +204,30 @@ function love.draw()
 
     end
 
+    --This displays the rules on the rules page for the player.
     if gameState == 'rules' then
         love.graphics.setFont(largeFont)
-        love.graphics.printf('Test', 0, 40, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('Rules', 0, 40, VIRTUAL_WIDTH, 'center')
+        love.graphics.setFont(smallFont)
+        love.graphics.printf("Press 'S' to go back to the main screen. Press 'Enter' to join a table and begin a game!", 0, 175, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("1. The goal of blackjack is to beat the dealer's hand without going over 21.", 0, 200, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("2. Face cards are worth 10. Aces are worth 1 or 11, whichever makes a better hand.", 0, 225, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("3. Each player starts with two cards, one of the dealer's cards is hidden until the end.", 0, 250, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("4. To 'Hit' is to ask for another card. To 'Stand' is to hold your total and end your turn.", 0, 275, VIRTUAL_WIDTH, 'center')
     
+    end
+
+    --This is the game layout.
+    if gameState == 'play' then
+        love.graphics.setFont(gameFont)
+        love.graphics.printf("Player Balance:", 50, 50, VIRTUAL_WIDTH, 'left')
+        love.graphics.print(playerMoney, 50, 100)
+        love.graphics.printf("Current Bet:", 50, 150, VIRTUAL_WIDTH, 'left')
+        love.graphics.print(currentBet, 50, 200)
+        love.graphics.printf("Hand Point Total:", 50, 250, VIRTUAL_WIDTH, 'left')
+        love.graphics.print(pointTotal, 50, 300)
+
+
     end
 
     push:finish()
@@ -146,14 +235,33 @@ end
 
 function love.update(dt)
 
-    --If the player presses and holds 'r' they can go to the rules page and read how to play.
-    if love.keyboard.isDown('r') then
-        gameState = 'rules'
-    else
-        gameState = 'start'
+    love.keyboard.keysPressed = {}
+
+    if gameState == 'play' then
+        --if tKeyDown == true then do
+        --    playerMoney = playerMoney - 50
+        --    currentBet = currentBet + 50
+        --end end
+
+
     end
+    
 
 end
+
+--This function allows the player the make bets from their current balance during the game.
+function love.event.bet(amount)
+    --This if statement prevents the user from betting money they do not have.
+    if playerMoney < amount then
+        amount = 0
+    end
+
+    playerMoney = playerMoney - amount
+    currentBet = currentBet + amount
+    return playerMoney, currentBet
+
+end
+
 
 
 
