@@ -21,36 +21,10 @@ gameState = 'start'
 playerMoney = 500
 currentBet = 0
 pointTotal = 0
+cardValue = love.graphics.newImage('cards/red_back.png')
 
+placeHolder = love.graphics.newImage('cards/red_back.png')
 
---RULES:
---The goal of blackjack is to beat the dealer's hand without going over 21.
-
---Face cards are worth 10. Aces are worth 1 or 11, whichever makes a better hand.
-
---Each player starts with two cards, one of the dealer's cards is hidden until the end.
-
---To 'Hit' is to ask for another card. To 'Stand' is to hold your total and end your turn.
-
---If you go over 21 you bust, and the dealer wins regardless of the dealer's hand.
-
---If you are dealt 21 from the start (Ace & 10), you got a blackjack.
-
---Blackjack usually means you win 1.5 the amount of your bet. Depends on the casino.
-
---Dealer will hit until his/her cards total 17 or higher.
-
---Doubling is like a hit, only the bet is doubled and you only get one more card.
-
---Split can be done when you have two of the same card - the pair is split into two hands.
-
---Splitting also doubles the bet, because each new hand is worth the original bet.
-
---You can only double/split on the first move, or first move of a hand created by a split.
-
---You cannot play on two aces after they are split.
-
---You can double on a hand resulting from a split, tripling or quadrupling you bet.
 
 
 function love.load()
@@ -143,6 +117,9 @@ function love.keypressed(key)
 
     if key == 'p' then
         gameState = 'play'
+        playerMoney = 500
+        currentBet = 0
+        pointTotal = 0
     end
 
     if key == '5' then
@@ -165,6 +142,10 @@ function love.keypressed(key)
         love.event.bet(10)
     end
 
+    -- This is to test the drawing of the cards and assigning them a value
+    if key == '8' then
+        love.event.playhand()
+    end
 
 
     love.keyboard.keysPressed[key] = true
@@ -214,6 +195,16 @@ function love.draw()
         love.graphics.printf("2. Face cards are worth 10. Aces are worth 1 or 11, whichever makes a better hand.", 0, 225, VIRTUAL_WIDTH, 'center')
         love.graphics.printf("3. Each player starts with two cards, one of the dealer's cards is hidden until the end.", 0, 250, VIRTUAL_WIDTH, 'center')
         love.graphics.printf("4. To 'Hit' is to ask for another card. To 'Stand' is to hold your total and end your turn.", 0, 275, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("5. If you go over 21 you bust, and the dealer wins regardless of the dealer's hand.", 0, 300, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("6. If you are dealt 21 from the start (Ace & 10), you got a blackjack.", 0, 325, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("7. Blackjack means you win 1.5 the amount of your bet.", 0, 350, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("8. Dealer will hit until his/her cards total 17 or higher.", 0, 375, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("9. Doubling is like a hit, only the bet is doubled and you only get one more card.", 0, 400, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("10. Split can be done when you have two of the same card - the pair is split into two hands.", 0, 425, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("11. Splitting also doubles the bet, because each new hand is worth the original bet.", 0, 450, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("12. You can only double/split on the first move, or first move of a hand created by a split.", 0, 475, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("13. You cannot play on two aces after they are split.", 0, 500, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("14. You can double on a hand resulting from a split, tripling or quadrupling you bet.", 0, 525, VIRTUAL_WIDTH, 'center')
     
     end
 
@@ -227,6 +218,12 @@ function love.draw()
         love.graphics.printf("Hand Point Total:", 50, 250, VIRTUAL_WIDTH, 'left')
         love.graphics.print(pointTotal, 50, 300)
 
+        love.graphics.setFont(gameFont)
+        love.graphics.printf("Player Hand:", 550, 100, VIRTUAL_WIDTH)
+        
+        love.graphics.scale(0.2,0.2)
+        love.graphics.draw(cardValue, 600/0.2, 175/0.2)
+        love.graphics.draw(placeHolder, 750/0.2, 175/0.2)
 
     end
 
@@ -238,12 +235,28 @@ function love.update(dt)
     love.keyboard.keysPressed = {}
 
     if gameState == 'play' then
-        --if tKeyDown == true then do
-        --    playerMoney = playerMoney - 50
-        --    currentBet = currentBet + 50
-        --end end
-
-
+        if cardValue == 1 then
+            cardValue = twoClubs
+            pointTotal = pointTotal + 2
+        elseif cardValue == 2 then
+            cardValue = twoDiamonds
+            pointTotal = pointTotal + 2
+        elseif cardValue == 3 then
+            cardValue = twoHearts
+            pointTotal = pointTotal + 2
+        elseif cardValue == 4 then
+            cardValue = twoSpades
+            pointTotal = pointTotal + 2
+        elseif cardValue == 5 then
+            cardValue = threeClubs
+            pointTotal = pointTotal + 3
+        elseif cardValue == 6 then
+            cardValue = threeDiamonds
+            pointTotal = pointTotal + 3
+        elseif cardValue == 7 then
+            cardValue = threeHearts
+            pointTotal = pointTotal + 3 
+        end
     end
     
 
@@ -263,6 +276,9 @@ function love.event.bet(amount)
 end
 
 
-
+function love.event.playhand()
+    cardValue = math.random(7)
+    return cardValue
+end
 
 
