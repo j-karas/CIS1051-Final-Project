@@ -8,6 +8,8 @@ VIRTUAL_HEIGHT = 720
 push = require 'push'
 Class = require 'class'
 
+require 'Card'
+
 
 --Sets up the window for the game and centers everything according.
 push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, {
@@ -17,6 +19,7 @@ push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, {
 })
 
 gameState = 'start'
+handState = 'test'
 
 playerMoney = 500
 currentBet = 0
@@ -57,8 +60,8 @@ function love.load()
     sevenSpades = love.graphics.newImage('cards/7S.png')
     eightClubs = love.graphics.newImage('cards/8C.png')
     eightDiamonds = love.graphics.newImage('cards/8D.png')
-    eigthHearts = love.graphics.newImage('cards/8H.png')
-    eigthSpades = love.graphics.newImage('cards/8S.png')
+    eightHearts = love.graphics.newImage('cards/8H.png')
+    eightSpades = love.graphics.newImage('cards/8S.png')
     nineClubs = love.graphics.newImage('cards/9C.png')
     nineDiamonds = love.graphics.newImage('cards/9D.png')
     nineHearts = love.graphics.newImage('cards/9H.png')
@@ -227,6 +230,20 @@ function love.draw()
 
     end
 
+    if handState == 'won' then
+        love.graphics.scale(1.3,1.3)
+        love.graphics.setFont(largeFont)
+        love.graphics.setColor(100 / 255, 50 / 255, 255 / 255, 255 / 255)
+        love.graphics.printf("You won your last hand!", 50, 50, VIRTUAL_WIDTH, 'center')
+    end
+
+    if handState == 'lost' then
+        love.graphics.scale(1.3,1.3)
+        love.graphics.setFont(largeFont)
+        love.graphics.setColor(255 / 255, 50 / 255, 100 / 255, 255)
+        love.graphics.printf("You lost your last hand!", 50, 50, VIRTUAL_WIDTH, 'center')
+    end
+
     push:finish()
 end
 
@@ -234,7 +251,10 @@ function love.update(dt)
 
     love.keyboard.keysPressed = {}
 
+
     if gameState == 'play' then
+
+
         if cardValue == 1 then
             cardValue = twoClubs
             pointTotal = pointTotal + 2
@@ -255,10 +275,170 @@ function love.update(dt)
             pointTotal = pointTotal + 3
         elseif cardValue == 7 then
             cardValue = threeHearts
-            pointTotal = pointTotal + 3 
+            pointTotal = pointTotal + 3
+        elseif cardValue == 8 then
+            cardValue = threeSpades
+            pointTotal = pointTotal + 3
+        elseif cardValue == 9 then
+            cardValue = fourClubs
+            pointTotal = pointTotal + 4
+        elseif cardValue == 10 then
+            cardValue = fourDiamonds
+            pointTotal = pointTotal + 4
+        elseif cardValue == 11 then
+            cardValue = fourHearts
+            pointTotal = pointTotal + 4
+        elseif cardValue == 12 then
+            cardValue = fourSpades
+            pointTotal = pointTotal + 4
+        elseif cardValue == 13 then
+            cardValue = fiveClubs
+            pointTotal = pointTotal + 5
+        elseif cardValue == 14 then
+            cardValue = fiveDiamonds
+            pointTotal = pointTotal + 5
+        elseif cardValue == 15 then
+            cardValue = fiveHearts
+            pointTotal = pointTotal + 5
+        elseif cardValue == 16 then
+            cardValue = fiveSpades
+            pointTotal = pointTotal + 5
+        elseif cardValue == 17 then
+            cardValue = sixClubs
+            pointTotal = pointTotal + 6
+        elseif cardValue == 18 then
+            cardValue = sixDiamonds
+            pointTotal = pointTotal + 6
+        elseif cardValue == 19 then
+            cardValue = sixHearts
+            pointTotal = pointTotal + 6
+        elseif cardValue == 20 then
+            cardValue = sixSpades
+            pointTotal = pointTotal + 6
+        elseif cardValue == 21 then
+            cardValue = sevenClubs
+            pointTotal = pointTotal + 7
+        elseif cardValue == 22 then
+            cardValue = sevenDiamonds
+            pointTotal = pointTotal + 7
+        elseif cardValue == 23 then
+            cardValue = sevenHearts
+            pointTotal = pointTotal + 7
+        elseif cardValue == 24 then
+            cardValue = sevenSpades
+            pointTotal = pointTotal + 7
+        elseif cardValue == 25 then
+            cardValue = eightClubs
+            pointTotal = pointTotal + 8
+        elseif cardValue == 26 then
+            cardValue = eightDiamonds
+            pointTotal = pointTotal + 8
+        elseif cardValue == 27 then
+            cardValue = eightHearts
+            pointTotal = pointTotal + 8
+        elseif cardValue == 28 then
+            cardValue = eightSpades
+            pointTotal = pointTotal + 8
+        elseif cardValue == 29 then
+            cardValue = nineClubs
+            pointTotal = pointTotal + 9
+        elseif cardValue == 30 then
+            cardValue = nineDiamonds
+            pointTotal = pointTotal + 9
+        elseif cardValue == 31 then
+            cardValue = nineHearts
+            pointTotal = pointTotal + 9
+        elseif cardValue == 32 then
+            cardValue = nineSpades
+            pointTotal = pointTotal + 9
+        elseif cardValue == 33 then
+            cardValue = tenClubs
+            pointTotal = pointTotal + 10
+        elseif cardValue == 34 then
+            cardValue = tenDiamonds
+            pointTotal = pointTotal + 10
+        elseif cardValue == 35 then
+            cardValue = tenHearts
+            pointTotal = pointTotal + 10
+        elseif cardValue == 36 then
+            cardValue = tenSpades
+            pointTotal = pointTotal + 10
+        elseif cardValue == 37 then
+            cardValue = aceClubs
+            if pointTotal <= 10 then
+                pointTotal = pointTotal + 11
+            elseif pointTotal > 10 then
+                pointTotal = pointTotal + 1
+            end
+        elseif cardValue == 38 then
+            cardValue = aceDiamonds
+            if pointTotal <= 10 then
+                pointTotal = pointTotal + 11
+            elseif pointTotal > 10 then
+                pointTotal = pointTotal + 1
+            end
+        elseif cardValue == 39 then
+            cardValue = aceHearts
+            if pointTotal <= 10 then
+                pointTotal = pointTotal + 11
+            elseif pointTotal > 10 then
+                pointTotal = pointTotal + 1
+            end
+        elseif cardValue == 40 then
+            cardValue = aceSpades
+            if pointTotal <= 10 then
+                pointTotal = pointTotal + 11
+            elseif pointTotal > 10 then
+                pointTotal = pointTotal + 1
+            end
+        elseif cardValue == 41 then
+            cardValue = jackClubs
+            pointTotal = pointTotal + 10
+        elseif cardValue == 42 then
+            cardValue = jackDiamonds
+            pointTotal = pointTotal + 10
+        elseif cardValue == 43 then
+            cardValue = jackHearts
+            pointTotal = pointTotal + 10
+        elseif cardValue == 44 then
+            cardValue = jackSpades
+            pointTotal = pointTotal + 10
+        elseif cardValue == 45 then
+            cardValue = kingClubs
+            pointTotal = pointTotal + 10
+        elseif cardValue == 46 then
+            cardValue = kingDiamonds
+            pointTotal = pointTotal + 10
+        elseif cardValue == 47 then
+            cardValue = kingHearts
+            pointTotal = pointTotal + 10
+        elseif cardValue == 48 then
+            cardValue = kingSpades
+            pointTotal = pointTotal + 10
+        elseif cardValue == 49 then
+            cardValue = queenClubs
+            pointTotal = pointTotal + 10
+        elseif cardValue == 50 then
+            cardValue = queenDiamonds
+            pointTotal = pointTotal + 10
+        elseif cardValue == 51 then
+            cardValue = queenHearts
+            pointTotal = pointTotal + 10
+        elseif cardValue == 52 then
+            cardValue = queenSpades
+            pointTotal = pointTotal + 10
         end
+        
+        if pointTotal == 21 then
+            love.event.winhand()
+        end
+
+        if pointTotal > 21 then
+            love.event.losehand()
+        end
+        
     end
-    
+
 
 end
 
@@ -277,8 +457,25 @@ end
 
 
 function love.event.playhand()
-    cardValue = math.random(7)
+    cardValue = math.random(52)
     return cardValue
+end
+
+function love.event.winhand()
+    playerMoney = (currentBet * 1.5) + playerMoney
+    currentBet = 0
+    pointTotal = 0
+    cardValue = placeHolder
+    handState = 'won'
+    return playerMoney, currentBet, pointTotal, cardValue, handState
+end
+
+function love.event.losehand()
+    currentBet = 0
+    pointTotal = 0
+    cardValue = placeHolder
+    handState = 'lost'
+    return currentBet, pointTotal, cardValue, handState
 end
 
 
