@@ -8,7 +8,8 @@ VIRTUAL_HEIGHT = 720
 push = require 'push'
 Class = require 'class'
 
-require 'Card'
+stageCounter = 0
+
 
 
 --Sets up the window for the game and centers everything according.
@@ -24,13 +25,25 @@ handState = 'test'
 playerMoney = 500
 currentBet = 0
 pointTotal = 0
-cardValue = love.graphics.newImage('cards/red_back.png')
+
+dealerTotal = 0
+
+playerCard1 = love.graphics.newImage('cards/red_back.png')
+playerCard2 = love.graphics.newImage('cards/red_back.png')
+
+dealerCard1 =  love.graphics.newImage('cards/red_back.png')
+dealerCard2 = love.graphics.newImage('cards/red_back.png')
+dealerCard3 = love.graphics.newImage('cards/red_back.png')
+dealerCard4 = love.graphics.newImage('cards/red_back.png')
+dealerCard5 = love.graphics.newImage('cards/red_back.png')
 
 placeHolder = love.graphics.newImage('cards/red_back.png')
 
 
 
 function love.load()
+
+    math.randomseed(os.time())
 
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
@@ -97,6 +110,7 @@ function love.load()
     largeFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 100)
     gameFont = love.graphics.newFont('Carnevalee Freakshow.ttf', 50)
 
+
     --Loads all the card images, in the future, I will see if I can load this in a seperate file so this code doesn't take up many lines in main.
 
     love.keyboard.keysPressed = {}
@@ -146,10 +160,10 @@ function love.keypressed(key)
     end
 
     -- This is to test the drawing of the cards and assigning them a value
-    if key == '8' then
-        love.event.playhand()
+    if key == 'm' then
+        love.event.stageCounter()
     end
-
+    
 
     love.keyboard.keysPressed[key] = true
 
@@ -220,13 +234,24 @@ function love.draw()
         love.graphics.print(currentBet, 50, 200)
         love.graphics.printf("Hand Point Total:", 50, 250, VIRTUAL_WIDTH, 'left')
         love.graphics.print(pointTotal, 50, 300)
+        love.graphics.printf("Dealer Point Total:", 50, 350, VIRTUAL_WIDTH, 'left')
+        love.graphics.print(dealerTotal, 50, 400)
 
         love.graphics.setFont(gameFont)
-        love.graphics.printf("Player Hand:", 550, 100, VIRTUAL_WIDTH)
+        love.graphics.printf("Player Hand:", 450, 100, VIRTUAL_WIDTH)
+
+        love.graphics.printf("Dealer Hand:", 450, 400, VIRTUAL_WIDTH)
         
         love.graphics.scale(0.2,0.2)
-        love.graphics.draw(cardValue, 600/0.2, 175/0.2)
-        love.graphics.draw(placeHolder, 750/0.2, 175/0.2)
+        love.graphics.draw(playerCard1, 500/0.2, 175/0.2)
+        love.graphics.draw(playerCard2, 650/0.2, 175/0.2)
+        love.graphics.draw(dealerCard1, 500/0.2, 475/0.2)
+        love.graphics.draw(dealerCard2, 650/0.2, 475/0.2)
+        love.graphics.draw(dealerCard3, 800/0.2, 475/0.2)
+        love.graphics.draw(dealerCard4, 950/0.2, 475/0.2)
+        love.graphics.draw(dealerCard5, 1100/0.2, 475/0.2)
+
+
 
     end
 
@@ -254,180 +279,6 @@ function love.update(dt)
 
     if gameState == 'play' then
 
-
-        if cardValue == 1 then
-            cardValue = twoClubs
-            pointTotal = pointTotal + 2
-        elseif cardValue == 2 then
-            cardValue = twoDiamonds
-            pointTotal = pointTotal + 2
-        elseif cardValue == 3 then
-            cardValue = twoHearts
-            pointTotal = pointTotal + 2
-        elseif cardValue == 4 then
-            cardValue = twoSpades
-            pointTotal = pointTotal + 2
-        elseif cardValue == 5 then
-            cardValue = threeClubs
-            pointTotal = pointTotal + 3
-        elseif cardValue == 6 then
-            cardValue = threeDiamonds
-            pointTotal = pointTotal + 3
-        elseif cardValue == 7 then
-            cardValue = threeHearts
-            pointTotal = pointTotal + 3
-        elseif cardValue == 8 then
-            cardValue = threeSpades
-            pointTotal = pointTotal + 3
-        elseif cardValue == 9 then
-            cardValue = fourClubs
-            pointTotal = pointTotal + 4
-        elseif cardValue == 10 then
-            cardValue = fourDiamonds
-            pointTotal = pointTotal + 4
-        elseif cardValue == 11 then
-            cardValue = fourHearts
-            pointTotal = pointTotal + 4
-        elseif cardValue == 12 then
-            cardValue = fourSpades
-            pointTotal = pointTotal + 4
-        elseif cardValue == 13 then
-            cardValue = fiveClubs
-            pointTotal = pointTotal + 5
-        elseif cardValue == 14 then
-            cardValue = fiveDiamonds
-            pointTotal = pointTotal + 5
-        elseif cardValue == 15 then
-            cardValue = fiveHearts
-            pointTotal = pointTotal + 5
-        elseif cardValue == 16 then
-            cardValue = fiveSpades
-            pointTotal = pointTotal + 5
-        elseif cardValue == 17 then
-            cardValue = sixClubs
-            pointTotal = pointTotal + 6
-        elseif cardValue == 18 then
-            cardValue = sixDiamonds
-            pointTotal = pointTotal + 6
-        elseif cardValue == 19 then
-            cardValue = sixHearts
-            pointTotal = pointTotal + 6
-        elseif cardValue == 20 then
-            cardValue = sixSpades
-            pointTotal = pointTotal + 6
-        elseif cardValue == 21 then
-            cardValue = sevenClubs
-            pointTotal = pointTotal + 7
-        elseif cardValue == 22 then
-            cardValue = sevenDiamonds
-            pointTotal = pointTotal + 7
-        elseif cardValue == 23 then
-            cardValue = sevenHearts
-            pointTotal = pointTotal + 7
-        elseif cardValue == 24 then
-            cardValue = sevenSpades
-            pointTotal = pointTotal + 7
-        elseif cardValue == 25 then
-            cardValue = eightClubs
-            pointTotal = pointTotal + 8
-        elseif cardValue == 26 then
-            cardValue = eightDiamonds
-            pointTotal = pointTotal + 8
-        elseif cardValue == 27 then
-            cardValue = eightHearts
-            pointTotal = pointTotal + 8
-        elseif cardValue == 28 then
-            cardValue = eightSpades
-            pointTotal = pointTotal + 8
-        elseif cardValue == 29 then
-            cardValue = nineClubs
-            pointTotal = pointTotal + 9
-        elseif cardValue == 30 then
-            cardValue = nineDiamonds
-            pointTotal = pointTotal + 9
-        elseif cardValue == 31 then
-            cardValue = nineHearts
-            pointTotal = pointTotal + 9
-        elseif cardValue == 32 then
-            cardValue = nineSpades
-            pointTotal = pointTotal + 9
-        elseif cardValue == 33 then
-            cardValue = tenClubs
-            pointTotal = pointTotal + 10
-        elseif cardValue == 34 then
-            cardValue = tenDiamonds
-            pointTotal = pointTotal + 10
-        elseif cardValue == 35 then
-            cardValue = tenHearts
-            pointTotal = pointTotal + 10
-        elseif cardValue == 36 then
-            cardValue = tenSpades
-            pointTotal = pointTotal + 10
-        elseif cardValue == 37 then
-            cardValue = aceClubs
-            if pointTotal <= 10 then
-                pointTotal = pointTotal + 11
-            elseif pointTotal > 10 then
-                pointTotal = pointTotal + 1
-            end
-        elseif cardValue == 38 then
-            cardValue = aceDiamonds
-            if pointTotal <= 10 then
-                pointTotal = pointTotal + 11
-            elseif pointTotal > 10 then
-                pointTotal = pointTotal + 1
-            end
-        elseif cardValue == 39 then
-            cardValue = aceHearts
-            if pointTotal <= 10 then
-                pointTotal = pointTotal + 11
-            elseif pointTotal > 10 then
-                pointTotal = pointTotal + 1
-            end
-        elseif cardValue == 40 then
-            cardValue = aceSpades
-            if pointTotal <= 10 then
-                pointTotal = pointTotal + 11
-            elseif pointTotal > 10 then
-                pointTotal = pointTotal + 1
-            end
-        elseif cardValue == 41 then
-            cardValue = jackClubs
-            pointTotal = pointTotal + 10
-        elseif cardValue == 42 then
-            cardValue = jackDiamonds
-            pointTotal = pointTotal + 10
-        elseif cardValue == 43 then
-            cardValue = jackHearts
-            pointTotal = pointTotal + 10
-        elseif cardValue == 44 then
-            cardValue = jackSpades
-            pointTotal = pointTotal + 10
-        elseif cardValue == 45 then
-            cardValue = kingClubs
-            pointTotal = pointTotal + 10
-        elseif cardValue == 46 then
-            cardValue = kingDiamonds
-            pointTotal = pointTotal + 10
-        elseif cardValue == 47 then
-            cardValue = kingHearts
-            pointTotal = pointTotal + 10
-        elseif cardValue == 48 then
-            cardValue = kingSpades
-            pointTotal = pointTotal + 10
-        elseif cardValue == 49 then
-            cardValue = queenClubs
-            pointTotal = pointTotal + 10
-        elseif cardValue == 50 then
-            cardValue = queenDiamonds
-            pointTotal = pointTotal + 10
-        elseif cardValue == 51 then
-            cardValue = queenHearts
-            pointTotal = pointTotal + 10
-        elseif cardValue == 52 then
-            cardValue = queenSpades
-            pointTotal = pointTotal + 10
-        end
         
         if pointTotal == 21 then
             love.event.winhand()
@@ -436,6 +287,7 @@ function love.update(dt)
         if pointTotal > 21 then
             love.event.losehand()
         end
+        
         
     end
 
@@ -455,27 +307,1312 @@ function love.event.bet(amount)
 
 end
 
+function love.event.stageCounter()
+    stageCounter = stageCounter + 1
+    if stageCounter == 1 then
+        love.event.playHandStageOne(playerCard1)
+    elseif stageCounter == 2 then
+        love.event.playHandStageTwo(playerCard2)
+    elseif stageCounter == 3 then
+        love.event.dealerHandStageOne(dealerCard1)
+    elseif stageCounter == 4 then
+        love.event.dealerHandStageTwo(dealerCard2)
+    elseif stageCounter == 5 then
+        love.event.dealerHandStageThree(dealerCard3)
+    elseif stageCounter == 6 then
+        love.event.dealerHandStageFour(dealerCard4)
+    elseif stageCounter == 7 then
+        love.event.dealerHandStageFive(dealerCard5)
+    end
+    return stageCounter
+end
 
-function love.event.playhand()
-    cardValue = math.random(52)
-    return cardValue
+
+function love.event.playHandStageOne(playerCard)
+    playerCard = math.random(52)
+
+    if playerCard == 1 then
+        playerCard1 = twoClubs
+        pointTotal = pointTotal + 2
+    elseif playerCard == 2 then
+        playerCard1 = twoDiamonds
+        pointTotal = pointTotal + 2
+    elseif playerCard == 3 then
+        playerCard1 = twoHearts
+        pointTotal = pointTotal + 2
+    elseif playerCard == 4 then
+        playerCard1 = twoSpades
+        pointTotal = pointTotal + 2
+    elseif playerCard == 5 then
+        playerCard1 = threeClubs
+        pointTotal = pointTotal + 3
+    elseif playerCard == 6 then
+        playerCard1 = threeDiamonds
+        pointTotal = pointTotal + 3
+    elseif playerCard == 7 then
+        playerCard1 = threeHearts
+        pointTotal = pointTotal + 3
+    elseif playerCard == 8 then
+        playerCard1 = threeSpades
+        pointTotal = pointTotal + 3
+    elseif playerCard == 9 then
+        playerCard1 = fourClubs
+        pointTotal = pointTotal + 4
+    elseif playerCard == 10 then
+        playerCard1 = fourDiamonds
+        pointTotal = pointTotal + 4
+    elseif playerCard == 11 then
+        playerCard1 = fourHearts
+        pointTotal = pointTotal + 4
+    elseif playerCard == 12 then
+        playerCard1 = fourSpades
+        pointTotal = pointTotal + 4
+    elseif playerCard == 13 then
+        playerCard1 = fiveClubs
+        pointTotal = pointTotal + 5
+    elseif playerCard == 14 then
+        playerCard1 = fiveDiamonds
+        pointTotal = pointTotal + 5
+    elseif playerCard == 15 then
+        playerCard1 = fiveHearts
+        pointTotal = pointTotal + 5
+    elseif playerCard == 16 then
+        playerCard1 = fiveSpades
+        pointTotal = pointTotal + 5
+    elseif playerCard == 17 then
+        playerCard1 = sixClubs
+        pointTotal = pointTotal + 6
+    elseif playerCard == 18 then
+        playerCard1 = sixDiamonds
+        pointTotal = pointTotal + 6
+    elseif playerCard == 19 then
+        playerCard1 = sixHearts
+        pointTotal = pointTotal + 6
+    elseif playerCard == 20 then
+        playerCard1 = sixSpades
+        pointTotal = pointTotal + 6
+    elseif playerCard == 21 then
+        playerCard1 = sevenClubs
+        pointTotal = pointTotal + 7
+    elseif playerCard == 22 then
+        playerCard1 = sevenDiamonds
+        pointTotal = pointTotal + 7
+    elseif playerCard == 23 then
+        playerCard1 = sevenHearts
+        pointTotal = pointTotal + 7
+    elseif playerCard == 24 then
+        playerCard1 = sevenSpades
+        pointTotal = pointTotal + 7
+    elseif playerCard == 25 then
+        playerCard1 = eightClubs
+        pointTotal = pointTotal + 8
+    elseif playerCard == 26 then
+        playerCard1 = eightDiamonds
+        pointTotal = pointTotal + 8
+    elseif playerCard == 27 then
+        playerCard1 = eightHearts
+        pointTotal = pointTotal + 8
+    elseif playerCard == 28 then
+        playerCard1 = eightSpades
+        pointTotal = pointTotal + 8
+    elseif playerCard == 29 then
+        playerCard1 = nineClubs
+        pointTotal = pointTotal + 9
+    elseif playerCard == 30 then
+        playerCard1 = nineDiamonds
+        pointTotal = pointTotal + 9
+    elseif playerCard == 31 then
+        playerCard1 = nineHearts
+        pointTotal = pointTotal + 9
+    elseif playerCard == 32 then
+        playerCard1 = nineSpades
+        pointTotal = pointTotal + 9
+    elseif playerCard == 33 then
+        playerCard1 = tenClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 34 then
+        playerCard1 = tenDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 35 then
+        playerCard1 = tenHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 36 then
+        playerCard1 = tenSpades
+        pointTotal = pointTotal + 10
+    elseif playerCard == 37 then
+        playerCard1 = aceClubs
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 38 then
+        playerCard1 = aceDiamonds
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 39 then
+        playerCard1 = aceHearts
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 40 then
+        playerCard1 = aceSpades
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 41 then
+        playerCard1 = jackClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 42 then
+        playerCard1 = jackDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 43 then
+        playerCard1 = jackHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 44 then
+        playerCard1 = jackSpades
+        pointTotal = pointTotal + 10
+    elseif playerCard == 45 then
+        playerCard1 = kingClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 46 then
+        playerCard1 = kingDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 47 then
+        playerCard1 = kingHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 48 then
+        playerCard1 = kingSpades
+        pointTotal = pointTotal + 10
+    elseif playerCard == 49 then
+        playerCard1 = queenClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 50 then
+        playerCard1 = queenDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 51 then
+        playerCard1 = queenHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 52 then
+        playerCard1 = queenSpades
+        pointTotal = pointTotal + 10
+    end
+    return playerCard1, pointTotal
+end
+
+function love.event.playHandStageTwo(playerCard)
+
+    playerCard = math.random(52)
+
+    if playerCard == 1 then
+        playerCard2 = twoClubs
+        pointTotal = pointTotal + 2
+    elseif playerCard == 2 then
+        playerCard2 = twoDiamonds
+        pointTotal = pointTotal + 2
+    elseif playerCard == 3 then
+        playerCard2 = twoHearts
+        pointTotal = pointTotal + 2
+    elseif playerCard == 4 then
+        playerCard2 = twoSpades
+        pointTotal = pointTotal + 2
+    elseif playerCard == 5 then
+        playerCard2 = threeClubs
+        pointTotal = pointTotal + 3
+    elseif playerCard == 6 then
+        playerCard2 = threeDiamonds
+        pointTotal = pointTotal + 3
+    elseif playerCard == 7 then
+        playerCard2 = threeHearts
+        pointTotal = pointTotal + 3
+    elseif playerCard == 8 then
+        playerCard2 = threeSpades
+        pointTotal = pointTotal + 3
+    elseif playerCard == 9 then
+        playerCard2 = fourClubs
+        pointTotal = pointTotal + 4
+    elseif playerCard == 10 then
+        playerCard2 = fourDiamonds
+        pointTotal = pointTotal + 4
+    elseif playerCard == 11 then
+        playerCard2 = fourHearts
+        pointTotal = pointTotal + 4
+    elseif playerCard == 12 then
+        playerCard2 = fourSpades
+        pointTotal = pointTotal + 4
+    elseif playerCard == 13 then
+        playerCard2 = fiveClubs
+        pointTotal = pointTotal + 5
+    elseif playerCard == 14 then
+        playerCard2 = fiveDiamonds
+        pointTotal = pointTotal + 5
+    elseif playerCard == 15 then
+        playerCard2 = fiveHearts
+        pointTotal = pointTotal + 5
+    elseif playerCard == 16 then
+        playerCard2 = fiveSpades
+        pointTotal = pointTotal + 5
+    elseif playerCard == 17 then
+        playerCard2 = sixClubs
+        pointTotal = pointTotal + 6
+    elseif playerCard == 18 then
+        playerCard2 = sixDiamonds
+        pointTotal = pointTotal + 6
+    elseif playerCard == 19 then
+        playerCard2 = sixHearts
+        pointTotal = pointTotal + 6
+    elseif playerCard == 20 then
+        playerCard2 = sixSpades
+        pointTotal = pointTotal + 6
+    elseif playerCard == 21 then
+        playerCard2 = sevenClubs
+        pointTotal = pointTotal + 7
+    elseif playerCard == 22 then
+        playerCard2 = sevenDiamonds
+        pointTotal = pointTotal + 7
+    elseif playerCard == 23 then
+        playerCard2 = sevenHearts
+        pointTotal = pointTotal + 7
+    elseif playerCard == 24 then
+        playerCard2 = sevenSpades
+        pointTotal = pointTotal + 7
+    elseif playerCard == 25 then
+        playerCard2 = eightClubs
+        pointTotal = pointTotal + 8
+    elseif playerCard == 26 then
+        playerCard2 = eightDiamonds
+        pointTotal = pointTotal + 8
+    elseif playerCard == 27 then
+        playerCard2 = eightHearts
+        pointTotal = pointTotal + 8
+    elseif playerCard == 28 then
+        playerCard2 = eightSpades
+        pointTotal = pointTotal + 8
+    elseif playerCard == 29 then
+        playerCard2 = nineClubs
+        pointTotal = pointTotal + 9
+    elseif playerCard == 30 then
+        playerCard2 = nineDiamonds
+        pointTotal = pointTotal + 9
+    elseif playerCard == 31 then
+        playerCard2 = nineHearts
+        pointTotal = pointTotal + 9
+    elseif playerCard == 32 then
+        playerCard2 = nineSpades
+        pointTotal = pointTotal + 9
+    elseif playerCard == 33 then
+        playerCard2 = tenClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 34 then
+        playerCard2 = tenDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 35 then
+        playerCard2 = tenHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 36 then
+        playerCard2 = tenSpades
+        pointTotal = pointTotal + 10
+    elseif playerCard == 37 then
+        playerCard2 = aceClubs
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 38 then
+        playerCard2 = aceDiamonds
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 39 then
+        playerCard2 = aceHearts
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 40 then
+        playerCard2 = aceSpades
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 41 then
+        playerCard2 = jackClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 42 then
+        playerCard2 = jackDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 43 then
+        playerCard2 = jackHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 44 then
+        playerCard2 = jackSpades
+        pointTotal = pointTotal + 10
+    elseif playerCard == 45 then
+        playerCard2 = kingClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 46 then
+        playerCard2 = kingDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 47 then
+        playerCard2 = kingHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 48 then
+        playerCard2 = kingSpades
+        pointTotal = pointTotal + 10
+    elseif playerCard == 49 then
+        playerCard2 = queenClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 50 then
+        playerCard2 = queenDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 51 then
+        playerCard2 = queenHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 52 then
+        playerCard2 = queenSpades
+        pointTotal = pointTotal + 10
+    end
+    return playerCard2, pointTotal
+end
+
+function love.event.dealerHandStageOne(playerCard)
+    playerCard = math.random(52)
+
+    if playerCard == 1 then
+        dealerCard1 = twoClubs
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 2 then
+        dealerCard1 = twoDiamonds
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 3 then
+        dealerCard1 = twoHearts
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 4 then
+        dealerCard1 = twoSpades
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 5 then
+        dealerCard1 = threeClubs
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 6 then
+        dealerCard1 = threeDiamonds
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 7 then
+        dealerCard1 = threeHearts
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 8 then
+        dealerCard1 = threeSpades
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 9 then
+        dealerCard1 = fourClubs
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 10 then
+        dealerCard1 = fourDiamonds
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 11 then
+        dealerCard1 = fourHearts
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 12 then
+        dealerCard1 = fourSpades
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 13 then
+        dealerCard1 = fiveClubs
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 14 then
+        dealerCard1 = fiveDiamonds
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 15 then
+        dealerCard1 = fiveHearts
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 16 then
+        dealerCard1 = fiveSpades
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 17 then
+        dealerCard1 = sixClubs
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 18 then
+        dealerCard1 = sixDiamonds
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 19 then
+        dealerCard1 = sixHearts
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 20 then
+        dealerCard1 = sixSpades
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 21 then
+        dealerCard1 = sevenClubs
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 22 then
+        dealerCard1 = sevenDiamonds
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 23 then
+        dealerCard1 = sevenHearts
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 24 then
+        dealerCard1 = sevenSpades
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 25 then
+        dealerCard1 = eightClubs
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 26 then
+        dealerCard1 = eightDiamonds
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 27 then
+        dealerCard1 = eightHearts
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 28 then
+        dealerCard1 = eightSpades
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 29 then
+        dealerCard1 = nineClubs
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 30 then
+        dealerCard1 = nineDiamonds
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 31 then
+        dealerCard1 = nineHearts
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 32 then
+        dealerCard1 = nineSpades
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 33 then
+        dealerCard1 = tenClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 34 then
+        dealerCard1 = tenDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 35 then
+        dealerCard1 = tenHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 36 then
+        dealerCard1 = tenSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 37 then
+        dealerCard1 = aceClubs
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 38 then
+        dealerCard1 = aceDiamonds
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 39 then
+        dealerCard1 = aceHearts
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 40 then
+        dealerCard1 = aceSpades
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 41 then
+        dealerCard1 = jackClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 42 then
+        dealerCard1 = jackDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 43 then
+        dealerCard1 = jackHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 44 then
+        dealerCard1 = jackSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 45 then
+        dealerCard1 = kingClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 46 then
+        dealerCard1 = kingDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 47 then
+        dealerCard1 = kingHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 48 then
+        dealerCard1 = kingSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 49 then
+        dealerCard1 = queenClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 50 then
+        dealerCard1 = queenDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 51 then
+        dealerCard1 = queenHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 52 then
+        dealerCard1 = queenSpades
+        dealerTotal = dealerTotal + 10
+    end
+    return dealerCard1, dealerTotal
+end
+
+function love.event.dealerHandStageTwo(playerCard)
+    playerCard = math.random(52)
+
+    if playerCard == 1 then
+        dealerCard2 = twoClubs
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 2 then
+        dealerCard2 = twoDiamonds
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 3 then
+        dealerCard2 = twoHearts
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 4 then
+        dealerCard2 = twoSpades
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 5 then
+        dealerCard2 = threeClubs
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 6 then
+        dealerCard2 = threeDiamonds
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 7 then
+        dealerCard2 = threeHearts
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 8 then
+        dealerCard2 = threeSpades
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 9 then
+        dealerCard2 = fourClubs
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 10 then
+        dealerCard2 = fourDiamonds
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 11 then
+        dealerCard2 = fourHearts
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 12 then
+        dealerCard2 = fourSpades
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 13 then
+        dealerCard2 = fiveClubs
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 14 then
+        dealerCard2 = fiveDiamonds
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 15 then
+        dealerCard2 = fiveHearts
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 16 then
+        dealerCard2 = fiveSpades
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 17 then
+        dealerCard2 = sixClubs
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 18 then
+        dealerCard2 = sixDiamonds
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 19 then
+        dealerCard2 = sixHearts
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 20 then
+        dealerCard2 = sixSpades
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 21 then
+        dealerCard2 = sevenClubs
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 22 then
+        dealerCard2 = sevenDiamonds
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 23 then
+        dealerCard2 = sevenHearts
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 24 then
+        dealerCard2 = sevenSpades
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 25 then
+        dealerCard2 = eightClubs
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 26 then
+        dealerCard2 = eightDiamonds
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 27 then
+        dealerCard2 = eightHearts
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 28 then
+        dealerCard2 = eightSpades
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 29 then
+        dealerCard2 = nineClubs
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 30 then
+        dealerCard2 = nineDiamonds
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 31 then
+        dealerCard2 = nineHearts
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 32 then
+        dealerCard2 = nineSpades
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 33 then
+        dealerCard2 = tenClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 34 then
+        dealerCard2 = tenDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 35 then
+        dealerCard2 = tenHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 36 then
+        dealerCard2 = tenSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 37 then
+        dealerCard2 = aceClubs
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 38 then
+        dealerCard2 = aceDiamonds
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 39 then
+        dealerCard2 = aceHearts
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 40 then
+        dealerCard2 = aceSpades
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 41 then
+        dealerCard2 = jackClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 42 then
+        dealerCard2 = jackDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 43 then
+        dealerCard2 = jackHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 44 then
+        dealerCard2 = jackSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 45 then
+        dealerCard2 = kingClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 46 then
+        dealerCard2 = kingDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 47 then
+        dealerCard2 = kingHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 48 then
+        dealerCard2 = kingSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 49 then
+        dealerCard2 = queenClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 50 then
+        dealerCard2 = queenDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 51 then
+        dealerCard2 = queenHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 52 then
+        dealerCard2 = queenSpades
+        dealerTotal = dealerTotal + 10
+    end
+    return dealerCard2, dealerTotal
+end
+
+function love.event.dealerHandStageThree(playerCard)
+    playerCard = math.random(52)
+
+    if playerCard == 1 then
+        dealerCard3 = twoClubs
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 2 then
+        dealerCard3 = twoDiamonds
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 3 then
+        dealerCard3 = twoHearts
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 4 then
+        dealerCard3 = twoSpades
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 5 then
+        dealerCard3 = threeClubs
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 6 then
+        dealerCard3 = threeDiamonds
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 7 then
+        dealerCard3 = threeHearts
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 8 then
+        dealerCard3 = threeSpades
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 9 then
+        dealerCard3 = fourClubs
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 10 then
+        dealerCard3 = fourDiamonds
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 11 then
+        dealerCard3 = fourHearts
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 12 then
+        dealerCard3 = fourSpades
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 13 then
+        dealerCard3 = fiveClubs
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 14 then
+        dealerCard3 = fiveDiamonds
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 15 then
+        dealerCard3 = fiveHearts
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 16 then
+        dealerCard3 = fiveSpades
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 17 then
+        dealerCard3 = sixClubs
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 18 then
+        dealerCard3 = sixDiamonds
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 19 then
+        dealerCard3 = sixHearts
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 20 then
+        dealerCard3 = sixSpades
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 21 then
+        dealerCard3 = sevenClubs
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 22 then
+        dealerCard3 = sevenDiamonds
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 23 then
+        dealerCard3 = sevenHearts
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 24 then
+        dealerCard3 = sevenSpades
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 25 then
+        dealerCard3 = eightClubs
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 26 then
+        dealerCard3 = eightDiamonds
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 27 then
+        dealerCard3 = eightHearts
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 28 then
+        dealerCard3 = eightSpades
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 29 then
+        dealerCard3 = nineClubs
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 30 then
+        dealerCard3 = nineDiamonds
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 31 then
+        dealerCard3 = nineHearts
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 32 then
+        dealerCard3 = nineSpades
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 33 then
+        dealerCard3 = tenClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 34 then
+        dealerCard3 = tenDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 35 then
+        dealerCard3 = tenHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 36 then
+        dealerCard3 = tenSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 37 then
+        dealerCard3 = aceClubs
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 38 then
+        dealerCard3 = aceDiamonds
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 39 then
+        dealerCard3 = aceHearts
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 40 then
+        dealerCard3 = aceSpades
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 41 then
+        dealerCard3 = jackClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 42 then
+        dealerCard3 = jackDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 43 then
+        dealerCard3 = jackHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 44 then
+        dealerCard3 = jackSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 45 then
+        dealerCard3 = kingClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 46 then
+        dealerCard3 = kingDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 47 then
+        dealerCard3 = kingHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 48 then
+        dealerCard3 = kingSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 49 then
+        dealerCard3 = queenClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 50 then
+        dealerCard3 = queenDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 51 then
+        dealerCard3 = queenHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 52 then
+        dealerCard3 = queenSpades
+        dealerTotal = dealerTotal + 10
+    end
+    return dealerCard3, dealerTotal
+end
+
+function love.event.dealerHandStageFour(playerCard)
+    playerCard = math.random(52)
+
+    if playerCard == 1 then
+        dealerCard4 = twoClubs
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 2 then
+        dealerCard4 = twoDiamonds
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 3 then
+        dealerCard4 = twoHearts
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 4 then
+        dealerCard4 = twoSpades
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 5 then
+        dealerCard4 = threeClubs
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 6 then
+        dealerCard4 = threeDiamonds
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 7 then
+        dealerCard4 = threeHearts
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 8 then
+        dealerCard4 = threeSpades
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 9 then
+        dealerCard4 = fourClubs
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 10 then
+        dealerCard4 = fourDiamonds
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 11 then
+        dealerCard4 = fourHearts
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 12 then
+        dealerCard4 = fourSpades
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 13 then
+        dealerCard4 = fiveClubs
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 14 then
+        dealerCard4 = fiveDiamonds
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 15 then
+        dealerCard4 = fiveHearts
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 16 then
+        dealerCard4 = fiveSpades
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 17 then
+        dealerCard4 = sixClubs
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 18 then
+        dealerCard4 = sixDiamonds
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 19 then
+        dealerCard4 = sixHearts
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 20 then
+        dealerCard4 = sixSpades
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 21 then
+        dealerCard4 = sevenClubs
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 22 then
+        dealerCard4 = sevenDiamonds
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 23 then
+        dealerCard4 = sevenHearts
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 24 then
+        dealerCard4 = sevenSpades
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 25 then
+        dealerCard4 = eightClubs
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 26 then
+        dealerCard4 = eightDiamonds
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 27 then
+        dealerCard4 = eightHearts
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 28 then
+        dealerCard4 = eightSpades
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 29 then
+        dealerCard4 = nineClubs
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 30 then
+        dealerCard4 = nineDiamonds
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 31 then
+        dealerCard4 = nineHearts
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 32 then
+        dealerCard4 = nineSpades
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 33 then
+        dealerCard4 = tenClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 34 then
+        dealerCard4 = tenDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 35 then
+        dealerCard4 = tenHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 36 then
+        dealerCard4 = tenSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 37 then
+        dealerCard4 = aceClubs
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 38 then
+        dealerCard4 = aceDiamonds
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 39 then
+        dealerCard4 = aceHearts
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 40 then
+        dealerCard4 = aceSpades
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 41 then
+        dealerCard4 = jackClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 42 then
+        dealerCard4 = jackDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 43 then
+        dealerCard4 = jackHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 44 then
+        dealerCard4 = jackSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 45 then
+        dealerCard4 = kingClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 46 then
+        dealerCard4 = kingDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 47 then
+        dealerCard4 = kingHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 48 then
+        dealerCard4 = kingSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 49 then
+        dealerCard4 = queenClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 50 then
+        dealerCard4 = queenDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 51 then
+        dealerCard4 = queenHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 52 then
+        dealerCard4 = queenSpades
+        dealerTotal = dealerTotal + 10
+    end
+    return dealerCard4, dealerTotal
+end
+
+function love.event.dealerHandStageFive(playerCard)
+    playerCard = math.random(52)
+
+    if playerCard == 1 then
+        dealerCard5 = twoClubs
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 2 then
+        dealerCard5 = twoDiamonds
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 3 then
+        dealerCard5 = twoHearts
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 4 then
+        dealerCard5 = twoSpades
+        dealerTotal = dealerTotal + 2
+    elseif playerCard == 5 then
+        dealerCard5 = threeClubs
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 6 then
+        dealerCard5 = threeDiamonds
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 7 then
+        dealerCard5 = threeHearts
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 8 then
+        dealerCard5 = threeSpades
+        dealerTotal = dealerTotal + 3
+    elseif playerCard == 9 then
+        dealerCard5 = fourClubs
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 10 then
+        dealerCard5 = fourDiamonds
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 11 then
+        dealerCard5 = fourHearts
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 12 then
+        dealerCard5 = fourSpades
+        dealerTotal = dealerTotal + 4
+    elseif playerCard == 13 then
+        dealerCard5 = fiveClubs
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 14 then
+        dealerCard5 = fiveDiamonds
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 15 then
+        dealerCard5 = fiveHearts
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 16 then
+        dealerCard5 = fiveSpades
+        dealerTotal = dealerTotal + 5
+    elseif playerCard == 17 then
+        dealerCard5 = sixClubs
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 18 then
+        dealerCard5 = sixDiamonds
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 19 then
+        dealerCard5 = sixHearts
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 20 then
+        dealerCard5 = sixSpades
+        dealerTotal = dealerTotal + 6
+    elseif playerCard == 21 then
+        dealerCard5 = sevenClubs
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 22 then
+        dealerCard5 = sevenDiamonds
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 23 then
+        dealerCard5 = sevenHearts
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 24 then
+        dealerCard5 = sevenSpades
+        dealerTotal = dealerTotal + 7
+    elseif playerCard == 25 then
+        dealerCard5 = eightClubs
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 26 then
+        dealerCard5 = eightDiamonds
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 27 then
+        dealerCard5 = eightHearts
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 28 then
+        dealerCard5 = eightSpades
+        dealerTotal = dealerTotal + 8
+    elseif playerCard == 29 then
+        dealerCard5 = nineClubs
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 30 then
+        dealerCard5 = nineDiamonds
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 31 then
+        dealerCard5 = nineHearts
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 32 then
+        dealerCard5 = nineSpades
+        dealerTotal = dealerTotal + 9
+    elseif playerCard == 33 then
+        dealerCard5 = tenClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 34 then
+        dealerCard5 = tenDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 35 then
+        dealerCard5 = tenHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 36 then
+        dealerCard5 = tenSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 37 then
+        dealerCard5 = aceClubs
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 38 then
+        dealerCard5 = aceDiamonds
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 39 then
+        dealerCard5 = aceHearts
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 40 then
+        dealerCard5 = aceSpades
+        if dealerTotal <= 10 then
+            dealerTotal = dealerTotal + 11
+        elseif dealerTotal > 10 then
+            dealerTotal = dealerTotal + 1
+        end
+    elseif playerCard == 41 then
+        dealerCard5 = jackClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 42 then
+        dealerCard5 = jackDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 43 then
+        dealerCard5 = jackHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 44 then
+        dealerCard5 = jackSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 45 then
+        dealerCard5 = kingClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 46 then
+        dealerCard5 = kingDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 47 then
+        dealerCard5 = kingHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 48 then
+        dealerCard5 = kingSpades
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 49 then
+        dealerCard5 = queenClubs
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 50 then
+        dealerCard5 = queenDiamonds
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 51 then
+        dealerCard5 = queenHearts
+        dealerTotal = dealerTotal + 10
+    elseif playerCard == 52 then
+        dealerCard5 = queenSpades
+        dealerTotal = dealerTotal + 10
+    end
+    return dealerCard5, dealerTotal
 end
 
 function love.event.winhand()
     playerMoney = (currentBet * 1.5) + playerMoney
     currentBet = 0
     pointTotal = 0
-    cardValue = placeHolder
+    dealerTotal = 0
+    playerCard1 = placeHolder
+    playerCard2 = placeHolder
+    dealerCard1 = placeHolder
+    dealerCard2 = placeHolder
+    dealerCard3 = placeHolder
+    dealerCard4 = placeHolder
+    dealerCard5 = placeHolder
+    stageCounter = 0
     handState = 'won'
-    return playerMoney, currentBet, pointTotal, cardValue, handState
+    return playerMoney, currentBet, pointTotal, dealerTotal, playerCard1, playerCard2, dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, handState, stageCounter
 end
 
 function love.event.losehand()
     currentBet = 0
     pointTotal = 0
-    cardValue = placeHolder
+    dealerTotal = 0
+    playerCard1 = placeHolder
+    playerCard2 = placeHolder
+    dealerCard1 = placeHolder
+    dealerCard2 = placeHolder
+    dealerCard3 = placeHolder
+    dealerCard4 = placeHolder
+    dealerCard5 = placeHolder
+    stageCounter = 0
     handState = 'lost'
-    return currentBet, pointTotal, cardValue, handState
+    return currentBet, pointTotal, dealerTotal, playerCard1, playerCard2, dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, handState, stageCounter
 end
 
 
