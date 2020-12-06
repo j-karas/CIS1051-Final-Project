@@ -6,8 +6,9 @@ VIRTUAL_HEIGHT = 720
 
 --Calls from the push library.
 push = require 'push'
-Class = require 'class'
 
+
+--This variable determines the stage of the hand.
 stageCounter = 0
 
 
@@ -25,19 +26,24 @@ handState = 'test'
 playerMoney = 500
 currentBet = 0
 pointTotal = 0
+totalWinnings = 0
 
 dealerTotal = 0
 
 playerCard1 = love.graphics.newImage('cards/red_back.png')
 playerCard2 = love.graphics.newImage('cards/red_back.png')
 
-dealerCard1 =  love.graphics.newImage('cards/red_back.png')
-dealerCard2 = love.graphics.newImage('cards/red_back.png')
-dealerCard3 = love.graphics.newImage('cards/red_back.png')
-dealerCard4 = love.graphics.newImage('cards/red_back.png')
-dealerCard5 = love.graphics.newImage('cards/red_back.png')
+dealerCard1 =  love.graphics.newImage('cards/yellow_back.png')
+dealerCard2 = love.graphics.newImage('cards/yellow_back.png')
+dealerCard3 = love.graphics.newImage('cards/yellow_back.png')
+dealerCard4 = love.graphics.newImage('cards/yellow_back.png')
+dealerCard5 = love.graphics.newImage('cards/yellow_back.png')
+
+hitCard = love.graphics.newImage('cards/purple_back.png')
 
 placeHolder = love.graphics.newImage('cards/red_back.png')
+placeHolder1 = love.graphics.newImage('cards/yellow_back.png')
+placeHolder2 = love.graphics.newImage('cards/purple_back.png')
 
 
 
@@ -113,7 +119,6 @@ function love.load()
 
     --Loads all the card images, in the future, I will see if I can load this in a seperate file so this code doesn't take up many lines in main.
 
-    love.keyboard.keysPressed = {}
 
 
 end
@@ -163,21 +168,15 @@ function love.keypressed(key)
     if key == 'm' then
         love.event.stageCounter()
     end
+
+    if key == 'b' then
+        love.event.hitCard(hitCard)
+    end
     
 
-    love.keyboard.keysPressed[key] = true
-
 end
 
---This is most likely not needed
-function love.keyreleased(key)
 
-end
-
---This is most likely not needed. I need to rewatch the mario workshop to see what they did with this function.
-function love.keyboard.wasPressed(key)
-    return love.keyboard.keysPressed[key]
-end
 
 function love.draw()
     --Applies the push attributes.
@@ -193,7 +192,7 @@ function love.draw()
         love.graphics.printf('Welcome to Blackjak', 0, 40, VIRTUAL_WIDTH, 'center')
         love.graphics.setFont(smallFont)
         love.graphics.printf('Press "R" to learn the instructions of Blackjak.', 0, 200, VIRTUAL_WIDTH, 'center')
-        love.graphics.printf('Press "Enter" to join a table and begin the game!', 0, 225, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('Press "P" to join a table and begin the game!', 0, 225, VIRTUAL_WIDTH, 'center')
         
         --This will scale the card images because they currently too big.
         love.graphics.scale(0.3, 0.3)
@@ -207,7 +206,7 @@ function love.draw()
         love.graphics.setFont(largeFont)
         love.graphics.printf('Rules', 0, 40, VIRTUAL_WIDTH, 'center')
         love.graphics.setFont(smallFont)
-        love.graphics.printf("Press 'S' to go back to the main screen. Press 'Enter' to join a table and begin a game!", 0, 175, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("Press 'S' to go back to the main screen. Press 'P' to join a table and begin a game!", 0, 175, VIRTUAL_WIDTH, 'center')
         love.graphics.printf("1. The goal of blackjack is to beat the dealer's hand without going over 21.", 0, 200, VIRTUAL_WIDTH, 'center')
         love.graphics.printf("2. Face cards are worth 10. Aces are worth 1 or 11, whichever makes a better hand.", 0, 225, VIRTUAL_WIDTH, 'center')
         love.graphics.printf("3. Each player starts with two cards, one of the dealer's cards is hidden until the end.", 0, 250, VIRTUAL_WIDTH, 'center')
@@ -227,6 +226,9 @@ function love.draw()
 
     --This is the game layout.
     if gameState == 'play' then
+        love.graphics.setFont(smallFont)
+        love.graphics.printf("Press 'm' to play the hand and press 'b' to hit!", 100, 25, VIRTUAL_WIDTH, 'center')
+
         love.graphics.setFont(gameFont)
         love.graphics.printf("Player Balance:", 50, 50, VIRTUAL_WIDTH, 'left')
         love.graphics.print(playerMoney, 50, 100)
@@ -236,15 +238,26 @@ function love.draw()
         love.graphics.print(pointTotal, 50, 300)
         love.graphics.printf("Dealer Point Total:", 50, 350, VIRTUAL_WIDTH, 'left')
         love.graphics.print(dealerTotal, 50, 400)
+        love.graphics.printf("Total Winnings:", 50, 450, VIRTUAL_WIDTH, 'left')
+        love.graphics.print(totalWinnings, 50, 500)
+
+        love.graphics.setFont(largeFont)
+        love.graphics.setColor( 0 / 255, 0 / 255, 0 / 255, 255 / 255)
+        love.graphics.printf("Blackjak", 50, 550, VIRTUAL_WIDTH, 'left')
+
+        love.graphics.setColor(255 / 255, 255 / 255, 255 / 255, 255 / 255)
 
         love.graphics.setFont(gameFont)
         love.graphics.printf("Player Hand:", 450, 100, VIRTUAL_WIDTH)
+
+        love.graphics.printf("Hit Card:", 900, 100, VIRTUAL_WIDTH)
 
         love.graphics.printf("Dealer Hand:", 450, 400, VIRTUAL_WIDTH)
         
         love.graphics.scale(0.2,0.2)
         love.graphics.draw(playerCard1, 500/0.2, 175/0.2)
         love.graphics.draw(playerCard2, 650/0.2, 175/0.2)
+        love.graphics.draw(hitCard, 950/0.2, 175/0.2)
         love.graphics.draw(dealerCard1, 500/0.2, 475/0.2)
         love.graphics.draw(dealerCard2, 650/0.2, 475/0.2)
         love.graphics.draw(dealerCard3, 800/0.2, 475/0.2)
@@ -279,6 +292,9 @@ function love.update(dt)
 
     if gameState == 'play' then
 
+        if dealerTotal == 21 then
+            love.event.losehand()
+        end
         
         if pointTotal == 21 then
             love.event.winhand()
@@ -287,6 +303,11 @@ function love.update(dt)
         if pointTotal > 21 then
             love.event.losehand()
         end
+
+        if dealerTotal > 21 then
+            love.event.winhand()
+        end
+
         
         
     end
@@ -312,19 +333,210 @@ function love.event.stageCounter()
     if stageCounter == 1 then
         love.event.playHandStageOne(playerCard1)
     elseif stageCounter == 2 then
-        love.event.playHandStageTwo(playerCard2)
-    elseif stageCounter == 3 then
         love.event.dealerHandStageOne(dealerCard1)
+    elseif stageCounter == 3 then
+        love.event.playHandStageTwo(playerCard2)
     elseif stageCounter == 4 then
         love.event.dealerHandStageTwo(dealerCard2)
     elseif stageCounter == 5 then
-        love.event.dealerHandStageThree(dealerCard3)
+        if dealerTotal < 17 then
+            love.event.dealerHandStageThree(dealerCard3)
+        elseif dealerTotal < pointTotal then
+            love.event.dealerHandStageThree(dealerCard3)
+        end
     elseif stageCounter == 6 then
-        love.event.dealerHandStageFour(dealerCard4)
+        if dealerTotal < 17 then
+            love.event.dealerHandStageFour(dealerCard4)
+        elseif dealerTotal < pointTotal then
+            love.event.dealerHandStageThree(dealerCard3)
+        end
     elseif stageCounter == 7 then
-        love.event.dealerHandStageFive(dealerCard5)
+        if dealerTotal < 17 then
+            love.event.dealerHandStageFive(dealerCard5)
+        elseif dealerTotal < pointTotal then
+            love.event.dealerHandStageThree(dealerCard3)
+        end
     end
     return stageCounter
+end
+
+function love.event.hitCard(playerCard)
+    playerCard = math.random(52)
+
+    if playerCard == 1 then
+        hitCard = twoClubs
+        pointTotal = pointTotal + 2
+    elseif playerCard == 2 then
+        hitCard = twoDiamonds
+        pointTotal = pointTotal + 2
+    elseif playerCard == 3 then
+        hitCard = twoHearts
+        pointTotal = pointTotal + 2
+    elseif playerCard == 4 then
+        hitCard = twoSpades
+        pointTotal = pointTotal + 2
+    elseif playerCard == 5 then
+        hitCard = threeClubs
+        pointTotal = pointTotal + 3
+    elseif playerCard == 6 then
+        hitCard = threeDiamonds
+        pointTotal = pointTotal + 3
+    elseif playerCard == 7 then
+        hitCard = threeHearts
+        pointTotal = pointTotal + 3
+    elseif playerCard == 8 then
+        hitCard = threeSpades
+        pointTotal = pointTotal + 3
+    elseif playerCard == 9 then
+        hitCard = fourClubs
+        pointTotal = pointTotal + 4
+    elseif playerCard == 10 then
+        hitCard = fourDiamonds
+        pointTotal = pointTotal + 4
+    elseif playerCard == 11 then
+        hitCard = fourHearts
+        pointTotal = pointTotal + 4
+    elseif playerCard == 12 then
+        hitCard = fourSpades
+        pointTotal = pointTotal + 4
+    elseif playerCard == 13 then
+        hitCard = fiveClubs
+        pointTotal = pointTotal + 5
+    elseif playerCard == 14 then
+        hitCard = fiveDiamonds
+        pointTotal = pointTotal + 5
+    elseif playerCard == 15 then
+        hitCard = fiveHearts
+        pointTotal = pointTotal + 5
+    elseif playerCard == 16 then
+        hitCard = fiveSpades
+        pointTotal = pointTotal + 5
+    elseif playerCard == 17 then
+        hitCard = sixClubs
+        pointTotal = pointTotal + 6
+    elseif playerCard == 18 then
+        hitCard = sixDiamonds
+        pointTotal = pointTotal + 6
+    elseif playerCard == 19 then
+        hitCard = sixHearts
+        pointTotal = pointTotal + 6
+    elseif playerCard == 20 then
+        hitCard = sixSpades
+        pointTotal = pointTotal + 6
+    elseif playerCard == 21 then
+        hitCard = sevenClubs
+        pointTotal = pointTotal + 7
+    elseif playerCard == 22 then
+        hitCard = sevenDiamonds
+        pointTotal = pointTotal + 7
+    elseif playerCard == 23 then
+        hitCard = sevenHearts
+        pointTotal = pointTotal + 7
+    elseif playerCard == 24 then
+        hitCard = sevenSpades
+        pointTotal = pointTotal + 7
+    elseif playerCard == 25 then
+        hitCard = eightClubs
+        pointTotal = pointTotal + 8
+    elseif playerCard == 26 then
+        hitCard = eightDiamonds
+        pointTotal = pointTotal + 8
+    elseif playerCard == 27 then
+        hitCard = eightHearts
+        pointTotal = pointTotal + 8
+    elseif playerCard == 28 then
+        hitCard = eightSpades
+        pointTotal = pointTotal + 8
+    elseif playerCard == 29 then
+        hitCard = nineClubs
+        pointTotal = pointTotal + 9
+    elseif playerCard == 30 then
+        hitCard = nineDiamonds
+        pointTotal = pointTotal + 9
+    elseif playerCard == 31 then
+        hitCard = nineHearts
+        pointTotal = pointTotal + 9
+    elseif playerCard == 32 then
+        hitCard = nineSpades
+        pointTotal = pointTotal + 9
+    elseif playerCard == 33 then
+        hitCard = tenClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 34 then
+        hitCard = tenDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 35 then
+        hitCard = tenHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 36 then
+        hitCard = tenSpades
+        pointTotal = pointTotal + 10
+    elseif playerCard == 37 then
+        hitCard = aceClubs
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 38 then
+        hitCard = aceDiamonds
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 39 then
+        hitCard = aceHearts
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 40 then
+        hitCard = aceSpades
+        if pointTotal <= 10 then
+            pointTotal = pointTotal + 11
+        elseif pointTotal > 10 then
+            pointTotal = pointTotal + 1
+        end
+    elseif playerCard == 41 then
+        hitCard = jackClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 42 then
+        hitCard = jackDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 43 then
+        hitCard = jackHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 44 then
+        hitCard = jackSpades
+        pointTotal = pointTotal + 10
+    elseif playerCard == 45 then
+        hitCard = kingClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 46 then
+        hitCard = kingDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 47 then
+        hitCard = kingHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 48 then
+        hitCard = kingSpades
+        pointTotal = pointTotal + 10
+    elseif playerCard == 49 then
+        hitCard = queenClubs
+        pointTotal = pointTotal + 10
+    elseif playerCard == 50 then
+        hitCard = queenDiamonds
+        pointTotal = pointTotal + 10
+    elseif playerCard == 51 then
+        hitCard = queenHearts
+        pointTotal = pointTotal + 10
+    elseif playerCard == 52 then
+        hitCard = queenSpades
+        pointTotal = pointTotal + 10
+    end
+    return hitCard, pointTotal
 end
 
 
@@ -1584,19 +1796,21 @@ end
 
 function love.event.winhand()
     playerMoney = (currentBet * 1.5) + playerMoney
+    totalWinnings = (currentBet * 1.5) + totalWinnings
     currentBet = 0
     pointTotal = 0
     dealerTotal = 0
     playerCard1 = placeHolder
     playerCard2 = placeHolder
-    dealerCard1 = placeHolder
-    dealerCard2 = placeHolder
-    dealerCard3 = placeHolder
-    dealerCard4 = placeHolder
-    dealerCard5 = placeHolder
+    dealerCard1 = placeHolder1
+    dealerCard2 = placeHolder1
+    dealerCard3 = placeHolder1
+    dealerCard4 = placeHolder1
+    dealerCard5 = placeHolder1
+    hitCard = placeHolder2
     stageCounter = 0
     handState = 'won'
-    return playerMoney, currentBet, pointTotal, dealerTotal, playerCard1, playerCard2, dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, handState, stageCounter
+    return playerMoney, currentBet, pointTotal, dealerTotal, playerCard1, playerCard2, dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, handState, stageCounter, totalWinnings, hitCard
 end
 
 function love.event.losehand()
@@ -1605,14 +1819,15 @@ function love.event.losehand()
     dealerTotal = 0
     playerCard1 = placeHolder
     playerCard2 = placeHolder
-    dealerCard1 = placeHolder
-    dealerCard2 = placeHolder
-    dealerCard3 = placeHolder
-    dealerCard4 = placeHolder
-    dealerCard5 = placeHolder
+    dealerCard1 = placeHolder1
+    dealerCard2 = placeHolder1
+    dealerCard3 = placeHolder1
+    dealerCard4 = placeHolder1
+    dealerCard5 = placeHolder1
+    hitCard = placeHolder2
     stageCounter = 0
     handState = 'lost'
-    return currentBet, pointTotal, dealerTotal, playerCard1, playerCard2, dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, handState, stageCounter
+    return currentBet, pointTotal, dealerTotal, playerCard1, playerCard2, dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5, handState, stageCounter, hitCard
 end
 
 
